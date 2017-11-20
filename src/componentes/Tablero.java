@@ -26,9 +26,9 @@ import javax.swing.Timer;
  */
 public class Tablero extends JPanel implements KeyListener {
    //Atributos
-   private final int TAMANIOBLOQUE = 30;
-   private final int ANCHO = 10;
-   private final int ALTO = 20;
+   public static final int TAMANIOBLOQUE = 30;
+   public static final int ANCHO = 10;
+   public static final int ALTO = 20;
    private BufferedImage bloques;
    private int [][] plot;
    private Figura[] figuras;
@@ -121,11 +121,6 @@ public class Tablero extends JPanel implements KeyListener {
     public int getTAMANIOBLOQUE() {
         return TAMANIOBLOQUE;
     }
-    
-    public int getANCHO() {
-        return ANCHO;
-    }
-   
    
     //Métodos abstractos de keyListener
     @Override
@@ -142,6 +137,9 @@ public class Tablero extends JPanel implements KeyListener {
         }
         else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
             figuraActual.setVelocidadActual(Figura.velocidadCaida); //al presionar se acelera la caída
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_UP) {
+            figuraActual.rotar();
         }
     }
 

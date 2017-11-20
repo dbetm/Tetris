@@ -16,6 +16,7 @@ public class Figura {
     private int velocidadActual; //toma el valor de la velocidad normal o de caida
     private long tiempoTranscurrido; //en milisegundos
     private long referenciaTiempoActual; //en milisegundos
+    private boolean llegoAbajo;
     
 
     public Figura(BufferedImage minoSurface, int[][] coordenadas, Tablero tab) {
@@ -23,6 +24,7 @@ public class Figura {
         this.coordenadas = coordenadas;
         this.tab = tab;
         punto = new Dupla(3,0); //para que aparezca en el centro?
+        llegoAbajo = false;
         velocidadActual = velocidadNormal;
         tiempoTranscurrido = 0;
         referenciaTiempoActual = System.currentTimeMillis();
@@ -35,14 +37,17 @@ public class Figura {
         referenciaTiempoActual = System.currentTimeMillis();
         //Gracias al if podemos saber si se efectua la actualización de posición o no, no se hará cuando
         //se salga de los bordes
-        if((punto.getX() + desplazamientoX + coordenadas[0].length) <= tab.getANCHO() && (punto.getX() + desplazamientoX) >= 0)
+        if((punto.getX() + desplazamientoX + coordenadas[0].length) <= Tablero.ANCHO && (punto.getX() + desplazamientoX) >= 0)
             punto.setX(punto.getX() + desplazamientoX);
         
-        if((punto.getY() + 1 + coordenadas.length) <= 20) {
+        if((punto.getY() + 1 + coordenadas.length) <= Tablero.ALTO) {
             if(tiempoTranscurrido > velocidadActual) {
                 punto.setY(punto.getY() + 1); // y++ de esta manera se desplaza hacia abajo
                 tiempoTranscurrido = 0;
             }
+        }
+        else {
+            llegoAbajo = true;
         }
         
         desplazamientoX = 0;
@@ -57,6 +62,37 @@ public class Figura {
                 }
             }
         }
+    }
+    
+    public void rotar() {
+        int nuevasCoordenadas[][];
+        nuevasCoordenadas = transponerMatriz(coordenadas);
+        nuevasCoordenadas = voltearMatriz(nuevasCoordenadas);
+        
+        if(punto.getX() + nuevasCoordenadas[0].length <= Tablero.ANCHO && punto.getY() + nuevasCoordenadas.length <= Tablero.ALTO){
+            coordenadas = nuevasCoordenadas;
+        }
+    }
+    
+    private int[][] transponerMatriz(int[][] matriz) {
+        int[][] matrizAux = new int[matriz[0].length][matriz.length]; //new int[columnas][filas]
+        for(int i = 0; i < matriz.length; i++) {
+            for(int j = 0; j < matriz[0].length; j++) {
+                matrizAux[j][i] = matriz[i][j];
+            }
+        }
+        return matrizAux;
+    }
+    
+    private int[][] voltearMatriz(int[][] matriz) {
+        int mitad = matriz.length / 2; //se obtiene la fila de la mitad
+        for(int i = 0; i < mitad; i++) {
+           int[] m = matriz[i]; //guardamos la fila a intercambiar
+           //se hace el intercambio
+           matriz[i] = matriz[matriz.length - i - 1];
+           matriz[matriz.length - i - 1] = m;
+        }
+        return matriz;
     }
     
     //Métodos de acceso
