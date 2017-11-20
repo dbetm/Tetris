@@ -36,32 +36,32 @@ public class Tablero extends JPanel implements KeyListener {
    private Timer timer;
     //Constantes
    private final int FPS = 60;
-   private final int RETARDO = 1000/FPS; // apróximadamente 17
+   private final int RETARDO = 1000/FPS; // apróximadamente 17 milisegundos
    
    //Constructor
    public Tablero() {
-       plot = new int[ANCHO][ALTO]; 
-       figuras = new Figura[7]; //para contener las figuras de cada tipo (I, O, Z, S, T, J, L).
-       
-       try {
-            bloques = ImageIO.read(new File("cuadros.png"));
-        } catch (IOException e) {
-            e.printStackTrace(); // printStackTrace( ) Se utiliza para imprimir el registro del stack donde se ha iniciado la excepción.
-            e.getMessage(); // getMessage( ) Se usa para obtener un mensaje de error asociado con una excepción. 
-        }
-       
-       timer = new Timer(RETARDO, new ActionListener() {
-           @Override
-           public void actionPerformed(ActionEvent e) {
-               actualizar();
-               repaint(); //refrescar la vista cada RETARDO transcurrido
-           }
-       });
-       
-       timer.start();
+        plot = new int[ANCHO][ALTO]; 
+        figuras = new Figura[7]; //para contener las figuras de cada tipo (I, O, Z, S, T, J, L).
+
+        try {
+             bloques = ImageIO.read(new File("cuadros.png"));
+         } catch (IOException e) {
+             e.printStackTrace(); // printStackTrace( ) Se utiliza para imprimir el registro del stack donde se ha iniciado la excepción.
+             e.getMessage(); // getMessage( ) Se usa para obtener un mensaje de error asociado con una excepción. 
+         }
+
+        timer = new Timer(RETARDO, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actualizar();
+                repaint(); //refrescar la vista cada RETARDO transcurrido
+            }
+        });
+
+        timer.start();
        
         generarFiguras();
-        figuraActual = figuras[3];
+        figuraActual = figuras[4];
     }
    
    public void actualizar() {
@@ -73,15 +73,15 @@ public class Tablero extends JPanel implements KeyListener {
        super.paintComponent(g);
        
        //Dibujando las filas
-       for(int i = 0; i < ALTO; i++) {
-           g.drawLine(0, i * TAMANIOBLOQUE, ANCHO * TAMANIOBLOQUE, i * TAMANIOBLOQUE);
-       }
-       //Dibujando las columnas
-       for(int i = 0; i < ANCHO; i++) {
-           g.drawLine(i * TAMANIOBLOQUE, 0, i * TAMANIOBLOQUE, ALTO * TAMANIOBLOQUE);
-       }
+        for(int i = 0; i < ALTO; i++) {
+            g.drawLine(0, i * TAMANIOBLOQUE, ANCHO * TAMANIOBLOQUE, i * TAMANIOBLOQUE);
+        }
+        //Dibujando las columnas
+        for(int i = 0; i < ANCHO; i++) {
+            g.drawLine(i * TAMANIOBLOQUE, 0, i * TAMANIOBLOQUE, ALTO * TAMANIOBLOQUE);
+        }
        
-       //generando gráficamente la figura actual
+        //generando gráficamente la figura actual
         figuraActual.generar(g);
 
    }
@@ -104,11 +104,11 @@ public class Tablero extends JPanel implements KeyListener {
        figuras[3] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 3, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), T, this);
        
        int[][] J = { {1,1,1},
-                      {0,0,1} }; //J
+                     {0,0,1} }; //J
        figuras[4] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 4, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), J, this);
        
        int[][] L = { {1,1,1},
-                      {1,0,0} }; //L
+                     {1,0,0} }; //L
        figuras[5] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 5, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), L, this);
        
        int[][] O = { {1,1},
@@ -117,31 +117,39 @@ public class Tablero extends JPanel implements KeyListener {
    }
    
    
-   //Métodos de acceso
-   public int getTAMANIOBLOQUE() {
+    //Métodos de acceso
+    public int getTAMANIOBLOQUE() {
         return TAMANIOBLOQUE;
+    }
+    
+    public int getANCHO() {
+        return ANCHO;
     }
    
    
     //Métodos abstractos de keyListener
     @Override
     public void keyTyped(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-            figuraActual.setCambioX(-1);
+            figuraActual.setDesplazamientoX(-1);
         }
         else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            figuraActual.setCambioX(1);
+            figuraActual.setDesplazamientoX(1);
+        }
+        else if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+            figuraActual.setVelocidadActual(Figura.velocidadCaida); //al presionar se acelera la caída
         }
     }
 
     @Override
     public void keyReleased(KeyEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(e.getKeyCode() == KeyEvent.VK_DOWN) {
+            figuraActual.setVelocidadActual(Figura.velocidadNormal); //al soltar la tecla se retoma la caída a una velocidad normal
+        }
     }
 }
 
