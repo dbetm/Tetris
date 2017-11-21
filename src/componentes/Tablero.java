@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package componentes;
 
 import java.awt.Graphics;
@@ -19,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
+import java.util.Random;
 
 /**
  *
@@ -40,7 +37,7 @@ public class Tablero extends JPanel implements KeyListener {
    
    //Constructor
    public Tablero() {
-        plot = new int[ANCHO][ALTO]; 
+        plot = new int[ALTO][ANCHO]; 
         figuras = new Figura[7]; //para contener las figuras de cada tipo (I, O, Z, S, T, J, L).
 
         try {
@@ -61,7 +58,7 @@ public class Tablero extends JPanel implements KeyListener {
         timer.start();
        
         generarFiguras();
-        figuraActual = figuras[4];
+        lanzarSiguienteFigura();
     }
    
    public void actualizar() {
@@ -80,40 +77,60 @@ public class Tablero extends JPanel implements KeyListener {
         for(int i = 0; i < ANCHO; i++) {
             g.drawLine(i * TAMANIOBLOQUE, 0, i * TAMANIOBLOQUE, ALTO * TAMANIOBLOQUE);
         }
-       
         //generando gráficamente la figura actual
         figuraActual.generar(g);
+        
+        for(int fila = 0; fila < plot.length; fila++) {
+            for (int columna = 0; columna < plot[fila].length; columna++) {
+                if(plot[fila][columna] != 0) {
+                    g.drawImage(bloques.getSubimage((plot[fila][columna]-1)*TAMANIOBLOQUE, 0, TAMANIOBLOQUE, TAMANIOBLOQUE),
+                                columna * TAMANIOBLOQUE, fila * TAMANIOBLOQUE, null);
+                }
+            }
+        }
 
-   }
+    }
+
+    public int[][] getPlot() {
+        return plot;
+    }
    
    private void generarFiguras() {
        //Mapeamos las figuras con arreglos, un 1 significa que el bloque va relleno
        int[][] I = { {1,1,1,1} }; //I 
-       figuras[0] = new Figura(bloques.getSubimage(0, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), I, this);
+       figuras[0] = new Figura(bloques.getSubimage(0, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), I, this, 1);
        
        int[][] Z = { {1,1,0},
                      {0,1,1} }; //Z
-       figuras[1] = new Figura(bloques.getSubimage(TAMANIOBLOQUE, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), Z, this);
+       figuras[1] = new Figura(bloques.getSubimage(TAMANIOBLOQUE, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), Z, this, 2);
        
        int[][] S = { {0,1,1},
                      {1,1,0} }; //S
-       figuras[2] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 2, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), S, this);
+       figuras[2] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 2, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), S, this, 3);
        
        int[][] T = { {1,1,1},
                      {0,1,0} }; //T
-       figuras[3] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 3, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), T, this);
+       figuras[3] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 3, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), T, this, 4);
        
        int[][] J = { {1,1,1},
                      {0,0,1} }; //J
-       figuras[4] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 4, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), J, this);
+       figuras[4] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 4, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), J, this, 5);
        
        int[][] L = { {1,1,1},
                      {1,0,0} }; //L
-       figuras[5] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 5, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), L, this);
+       figuras[5] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 5, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), L, this, 6);
        
        int[][] O = { {1,1},
                      {1,1} }; //0
-       figuras[6] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 6, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), O, this);
+       figuras[6] = new Figura(bloques.getSubimage(TAMANIOBLOQUE * 6, 0, TAMANIOBLOQUE, TAMANIOBLOQUE), O, this, 7);
+   }
+   
+   public void lanzarSiguienteFigura() {
+       int index;
+       Random r = new Random();
+       index = r.nextInt(7);
+       Figura nuevaFigura = new Figura(figuras[index].getMinoSurface(), figuras[index].getCoordenadas(), this, figuras[index].getTipoTextura());
+       figuraActual = nuevaFigura;
    }
    
    

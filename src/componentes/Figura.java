@@ -1,6 +1,7 @@
 
 package componentes;
 
+import static componentes.Tablero.TAMANIOBLOQUE;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -17,12 +18,14 @@ public class Figura {
     private long tiempoTranscurrido; //en milisegundos
     private long referenciaTiempoActual; //en milisegundos
     private boolean llegoAbajo;
+    private int tipoTextura;
     
 
-    public Figura(BufferedImage minoSurface, int[][] coordenadas, Tablero tab) {
+    public Figura(BufferedImage minoSurface, int[][] coordenadas, Tablero tab, int tipoTextura) {
         this.minoSurface = minoSurface;
         this.coordenadas = coordenadas;
         this.tab = tab;
+        this.tipoTextura = tipoTextura;
         punto = new Dupla(3,0); //para que aparezca en el centro?
         llegoAbajo = false;
         velocidadActual = velocidadNormal;
@@ -33,14 +36,54 @@ public class Figura {
     }
    
     public void actualizar() {
+        boolean movimientoValidoX = true;
+        
         tiempoTranscurrido += System.currentTimeMillis() - referenciaTiempoActual;
         referenciaTiempoActual = System.currentTimeMillis();
         //Gracias al if podemos saber si se efectua la actualización de posición o no, no se hará cuando
         //se salga de los bordes
-        if((punto.getX() + desplazamientoX + coordenadas[0].length) <= Tablero.ANCHO && (punto.getX() + desplazamientoX) >= 0)
-            punto.setX(punto.getX() + desplazamientoX);
+        if(llegoAbajo) {
+            
+            for(int fila = 0; fila < coordenadas.length; fila++) {
+                for(int columna = 0; columna < coordenadas[fila].length; columna++) {
+                    if(coordenadas[fila][columna] == 1) {
+                        tab.getPlot()[punto.getY() + fila][punto.getX() + columna] = tipoTextura;
+                    }
+                }
+            }
+            
+            tab.lanzarSiguienteFigura();
+            
+        }
+        
+        
+        if((punto.getX() + desplazamientoX + coordenadas[0].length) <= Tablero.ANCHO && (punto.getX() + desplazamientoX) >= 0) {
+            
+            for(int fila = 0; fila < coordenadas.length; fila++) {
+                for(int columna = 0; columna < coordenadas[fila].length; columna++) {
+                    if(coordenadas[fila][columna] != 0) {
+                        if(tab.getPlot()[punto.getY() + fila][punto.getX() + columna + desplazamientoX] != 0) {
+                            movimientoValidoX = false;
+                        }
+                    }
+                }
+            }
+            if(movimientoValidoX) punto.setX(punto.getX() + desplazamientoX);
+        }
+            
         
         if((punto.getY() + 1 + coordenadas.length) <= Tablero.ALTO) {
+            
+            for(int fila = 0; fila < coordenadas.length; fila++) {
+                for(int columna = 0; columna < coordenadas[fila].length; columna++) {
+                    if(coordenadas[fila][columna] != 0) {
+                        if(tab.getPlot()[punto.getY() + 1 + fila][punto.getX() + columna] != 0) {
+                            llegoAbajo = true;
+                        }
+                    }
+                }
+            }
+            
             if(tiempoTranscurrido > velocidadActual) {
                 punto.setY(punto.getY() + 1); // y++ de esta manera se desplaza hacia abajo
                 tiempoTranscurrido = 0;
@@ -103,4 +146,19 @@ public class Figura {
     public void setVelocidadActual(int velocidad) {
         this.velocidadActual = velocidad;
     }
+
+    public int getTipoTextura() {
+        return tipoTextura;
+    }
+
+    public int[][] getCoordenadas() {
+        return coordenadas;
+    }
+
+    public BufferedImage getMinoSurface() {
+        return minoSurface;
+    }
+    
+    
+
 }

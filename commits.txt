@@ -1,0 +1,32 @@
+commit 45015326c8f87591f94fd94dca92fe7932146f83
+Author: davbetm@gmail.com <davbetm@gmail.com>
+Date:   Mon Nov 20 15:23:43 2017 -0600
+
+    Funcionalidad de rotar
+
+commit 70d383181ce77a481c9bb67dae29a51413b1cf97
+Author: davbetm@gmail.com <davbetm@gmail.com>
+Date:   Mon Nov 20 13:27:12 2017 -0600
+
+    Desplazamiento hacia abajo, colisiones con los bordes, cambio de velocidad de caída
+
+commit 365c991c0d8e5264a85a6bbaab2f997bbd4c8f4f
+Merge: ff59f25 1ebcc22
+Author: davbetm@gmail.com <davbetm@gmail.com>
+Date:   Mon Nov 20 00:45:59 2017 -0600
+
+    Merge branch 'master' of https://github.com/dbetm/Tetris
+    
+    Porque
+
+commit ff59f25ec1dfc25f92a2668d89bbc2c6813178a4
+Author: davbetm@gmail.com <davbetm@gmail.com>
+Date:   Mon Nov 20 00:40:08 2017 -0600
+
+    Definición de las clases Tablero, Figura, Dupla y ControlPrincipal, ya se pueden mover los tetriminos hacia los lados
+
+commit 1ebcc22befb9e4e7056f65c4d96880d627bc1fc4
+Author: David Betancourt Montellano <davbetmo@gmail.com>
+Date:   Mon Nov 6 00:20:04 2017 -0600
+
+    Initial commit
