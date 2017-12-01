@@ -13,7 +13,7 @@ public class Figura {
     private int desplazamientoX = 0;
     private Dupla punto; //se toma como referencia para pintar las figuras
     public static final int velocidadNormal = 600; //velocidad normal a la que caen las figuras
-    public static final int velocidadCaida = 100; //velocidad a la cae una figura al presionar HACIA_ABAJO
+    public static final int velocidadCaida = 90; //velocidad a la cae una figura al presionar HACIA_ABAJO
     private int velocidadActual; //toma el valor de la velocidad normal o de caida
     private long tiempoTranscurrido; //en milisegundos
     private long referenciaTiempoActual; //en milisegundos
@@ -46,7 +46,7 @@ public class Figura {
             
             for(int fila = 0; fila < coordenadas.length; fila++) {
                 for(int columna = 0; columna < coordenadas[fila].length; columna++) {
-                    if(coordenadas[fila][columna] == 1) {
+                    if(coordenadas[fila][columna] != 0) {
                         tab.getPlot()[punto.getY() + fila][punto.getX() + columna] = tipoTextura;
                     }
                 }
@@ -56,7 +56,7 @@ public class Figura {
             
         }
         
-        
+        //Condicionar los movimientos laterales de figura actual para que no se salga del tablero
         if((punto.getX() + desplazamientoX + coordenadas[0].length) <= Tablero.ANCHO && (punto.getX() + desplazamientoX) >= 0) {
             
             for(int fila = 0; fila < coordenadas.length; fila++) {
@@ -68,29 +68,36 @@ public class Figura {
                     }
                 }
             }
+            //si el movimiento es inválido, entonce no se desplaza
             if(movimientoValidoX) punto.setX(punto.getX() + desplazamientoX);
         }
             
-        
+        //Si el movimiento hacia abajo todavía considera que está dentro de los límites del tablero
         if((punto.getY() + 1 + coordenadas.length) <= Tablero.ALTO) {
             
             for(int fila = 0; fila < coordenadas.length; fila++) {
                 for(int columna = 0; columna < coordenadas[fila].length; columna++) {
                     if(coordenadas[fila][columna] != 0) {
-                        if(tab.getPlot()[punto.getY() + 1 + fila][punto.getX() + columna] != 0) {
+                        if(tab.getPlot()[punto.getY() + 1 + fila][punto.getX() + columna] != 0) { //plot[fila][columna]
                             llegoAbajo = true;
+                            if(tab.isGameOver()){
+                                tab.detenerTimer();
+                                return;
+                            }
+                            tab.comprobarLine();
                         }
                     }
                 }
             }
             
-            if(tiempoTranscurrido > velocidadActual) {
+            if(tiempoTranscurrido > velocidadActual) { // o sea, si ya pasarón los 600 milisegundos entonces se cumple
                 punto.setY(punto.getY() + 1); // y++ de esta manera se desplaza hacia abajo
                 tiempoTranscurrido = 0;
             }
         }
         else {
             llegoAbajo = true;
+            tab.comprobarLine();
         }
         
         desplazamientoX = 0;
@@ -158,7 +165,4 @@ public class Figura {
     public BufferedImage getMinoSurface() {
         return minoSurface;
     }
-    
-    
-
 }

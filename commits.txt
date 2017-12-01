@@ -1,3 +1,9 @@
+commit 31af1edad6bfe4b03e066f01bb10a854593ce9a3
+Author: davbetm@gmail.com <davbetm@gmail.com>
+Date:   Tue Nov 21 01:06:04 2017 -0600
+
+    Fix: Problema con los colores
+
 commit 45015326c8f87591f94fd94dca92fe7932146f83
 Author: davbetm@gmail.com <davbetm@gmail.com>
 Date:   Mon Nov 20 15:23:43 2017 -0600
