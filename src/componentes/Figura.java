@@ -1,25 +1,24 @@
 
 package componentes;
 
-import static componentes.Tablero.TAMANIOBLOQUE;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 public class Figura {
     //Atributos
-    private BufferedImage minoSurface;
+    final private BufferedImage minoSurface;
     private int[][] coordenadas;
-    private Tablero tab; //para poder usar las coordenadas
+    final private Tablero tab; //para poder usar las coordenadas
     private int desplazamientoX = 0;
     private Dupla punto; //se toma como referencia para pintar las figuras
-    public static final int velocidadNormal = 600; //velocidad normal a la que caen las figuras
-    public static final int velocidadCaida = 90; //velocidad a la cae una figura al presionar HACIA_ABAJO
+    public static final int VELOCIDAD_NORMAL = 600; //velocidad normal a la que caen las figuras
+    public static final int VELOCIDAD_CAIDA = 90; //velocidad a la cae una figura al presionar HACIA_ABAJO
     private int velocidadActual; //toma el valor de la velocidad normal o de caida
     private long tiempoTranscurrido; //en milisegundos
     private long referenciaTiempoActual; //en milisegundos
     private boolean llegoAbajo;
-    private int tipoTextura;
-    
+    final private int tipoTextura;
+
 
     public Figura(BufferedImage minoSurface, int[][] coordenadas, Tablero tab, int tipoTextura) {
         this.minoSurface = minoSurface;
@@ -28,22 +27,22 @@ public class Figura {
         this.tipoTextura = tipoTextura;
         punto = new Dupla(3,0); //para que aparezca en el centro?
         llegoAbajo = false;
-        velocidadActual = velocidadNormal;
+        velocidadActual = VELOCIDAD_NORMAL;
         tiempoTranscurrido = 0;
         referenciaTiempoActual = System.currentTimeMillis();
         // The java.lang.System.currentTimeMillis() method returns the current time in milliseconds.
         //The unit of time of the return value is a millisecond, the granularity of the value depends on the underlying operating system and may be larger.
     }
-   
+
     public void actualizar() {
         boolean movimientoValidoX = true;
-        
+
         tiempoTranscurrido += System.currentTimeMillis() - referenciaTiempoActual;
         referenciaTiempoActual = System.currentTimeMillis();
         //Gracias al if podemos saber si se efectua la actualización de posición o no, no se hará cuando
         //se salga de los bordes
         if(llegoAbajo) {
-            
+
             for(int fila = 0; fila < coordenadas.length; fila++) {
                 for(int columna = 0; columna < coordenadas[fila].length; columna++) {
                     if(coordenadas[fila][columna] != 0) {
@@ -51,14 +50,14 @@ public class Figura {
                     }
                 }
             }
-            
+
             tab.lanzarSiguienteFigura();
-            
+
         }
-        
+
         //Condicionar los movimientos laterales de figura actual para que no se salga del tablero
         if((punto.getX() + desplazamientoX + coordenadas[0].length) <= Tablero.ANCHO && (punto.getX() + desplazamientoX) >= 0) {
-            
+
             for(int fila = 0; fila < coordenadas.length; fila++) {
                 for(int columna = 0; columna < coordenadas[fila].length; columna++) {
                     if(coordenadas[fila][columna] != 0) {
@@ -71,10 +70,10 @@ public class Figura {
             //si el movimiento es inválido, entonce no se desplaza
             if(movimientoValidoX) punto.setX(punto.getX() + desplazamientoX);
         }
-            
+
         //Si el movimiento hacia abajo todavía considera que está dentro de los límites del tablero
         if((punto.getY() + 1 + coordenadas.length) <= Tablero.ALTO) {
-            
+
             for(int fila = 0; fila < coordenadas.length; fila++) {
                 for(int columna = 0; columna < coordenadas[fila].length; columna++) {
                     if(coordenadas[fila][columna] != 0) {
@@ -89,7 +88,7 @@ public class Figura {
                     }
                 }
             }
-            
+
             if(tiempoTranscurrido > velocidadActual) { // o sea, si ya pasarón los 600 milisegundos entonces se cumple
                 punto.setY(punto.getY() + 1); // y++ de esta manera se desplaza hacia abajo
                 tiempoTranscurrido = 0;
@@ -99,31 +98,31 @@ public class Figura {
             llegoAbajo = true;
             tab.comprobarLine();
         }
-        
+
         desplazamientoX = 0;
     }
-    
+
     public void generar(Graphics g) {
         for(int fila = 0; fila < coordenadas.length; fila++) {
             for(int columna = 0; columna < coordenadas[fila].length; columna++) {
                 if(coordenadas[fila][columna] == 1) {
-                    g.drawImage(minoSurface, (columna * tab.getTAMANIOBLOQUE()) + (punto.getX() * tab.getTAMANIOBLOQUE()), 
+                    g.drawImage(minoSurface, (columna * tab.getTAMANIOBLOQUE()) + (punto.getX() * tab.getTAMANIOBLOQUE()),
                                              (fila * tab.getTAMANIOBLOQUE() + (punto.getY()) * tab.getTAMANIOBLOQUE()), null);
                 }
             }
         }
     }
-    
+
     public void rotar() {
         int nuevasCoordenadas[][];
         nuevasCoordenadas = transponerMatriz(coordenadas);
         nuevasCoordenadas = voltearMatriz(nuevasCoordenadas);
-        
+
         if(punto.getX() + nuevasCoordenadas[0].length <= Tablero.ANCHO && punto.getY() + nuevasCoordenadas.length <= Tablero.ALTO){
             coordenadas = nuevasCoordenadas;
         }
     }
-    
+
     private int[][] transponerMatriz(int[][] matriz) {
         int[][] matrizAux = new int[matriz[0].length][matriz.length]; //new int[columnas][filas]
         for(int i = 0; i < matriz.length; i++) {
@@ -133,7 +132,7 @@ public class Figura {
         }
         return matrizAux;
     }
-    
+
     private int[][] voltearMatriz(int[][] matriz) {
         int mitad = matriz.length / 2; //se obtiene la fila de la mitad
         for(int i = 0; i < mitad; i++) {
@@ -144,7 +143,7 @@ public class Figura {
         }
         return matriz;
     }
-    
+
     //Métodos de acceso
     public void setDesplazamientoX(int deltaX) {
         desplazamientoX = deltaX;
@@ -164,5 +163,13 @@ public class Figura {
 
     public BufferedImage getMinoSurface() {
         return minoSurface;
+    }
+
+    public Dupla getPunto() {
+        return punto;
+    }
+
+    public void setPunto(Dupla punto) {
+        this.punto = punto;
     }
 }
